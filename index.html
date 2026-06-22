@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منبع العلم / EduSource</title>
+    <!-- استدعاء مكتبة Tailwind CSS لجعل الألوان والتصميم عصرياً ومريحاً للعين -->
+    <script src="https://tailwindcss.com"></script>
+    <script>
+        // إعدادات مخصصة لدعم الوضع الداكن المريح للطلاب ليلاً
+        tailwind.config = { darkMode: 'class' }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300 min-h-screen">
+
+    <!-- 1. شريط التنقل العلوي (Navbar) -->
+    <nav class="w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">منبع العلم</span>
+                <span class="text-xs text-gray-400 font-mono hidden sm:inline">/ EduSource</span>
+            </div>
+            <div class="flex items-center space-x-4 space-x-reverse">
+                <button onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:ring-2 hover:ring-gray-300 transition-all" id="theme-btn">☀️</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 2. الجزء الرئيسي وصفحة البحث (Home) -->
+    <div class="max-w-4xl mx-auto text-center px-4 py-12">
+        <div class="mb-12">
+            <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent">مستقبلك الأكاديمي يبدأ هنا</h1>
+            <p class="text-gray-600 dark:text-gray-400 text-lg max-w-xl mx-auto">ابحث عن أي موضوع دراسي، ودع المنصة تجمع لك الأبحاث والكورسات بذكاء.</p>
+        </div>
+
+        <!-- شريط البحث الذكي -->
+        <div class="w-full max-w-2xl mx-auto px-4 mb-8">
+            <div class="relative flex items-center">
+                <input id="search-input" type="text" placeholder="اكتب موضوعاً دراسياً.. (مثال: تفاضل وتكامل)" class="w-full px-6 py-4 text-right rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 outline-none transition-all pl-16" />
+                <button onclick="startSearch()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-3 transition-colors shadow-sm">
+                    <svg xmlns="http://w3.org" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- حالة التحميل (Loader) -->
+        <div id="loader" class="hidden mt-12 flex-col items-center justify-center space-y-3">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+            <p class="text-sm text-gray-500 animate-pulse">جاري الاتصال بالسيرفر وجلب المصادر الحية...</p>
+        </div>
+
+        <!-- صندوق النتائج الذكي (Results Box) -->
+        <div id="results-box" class="hidden mt-12 text-right max-w-4xl mx-auto animate-fadeIn">
+            <div class="mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-950/30 rounded-2xl border border-blue-100/50 dark:border-gray-800">
+                <div class="flex items-center gap-2 mb-3 text-blue-600 dark:text-blue-400"><span>✨</span><h3 class="font-bold text-lg">لمحة ذكية وخريطة دراسية للموضوع</h3>
+                </div>
+                <p id="ai-summary" class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed"></p>
+            </div>
+            
+            <!-- شبكة عرض بطاقات المصادر -->
+            <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+    </div>
+
+    <!-- 3. الأكواد التشغيلية والربط الفعلي مع السيرفر السحابي الجديد -->
+    <script>
+        // ضع رابط سيرفر Render الفعلي والناجح الخاص بك هنا بين القوسين!
+        const BACKEND_URL = 'https://onrender.com';
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const btn = document.getElementById('theme-btn');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                btn.innerText = '🌙';
+            } else {
+                html.classList.add('dark');
+                btn.innerText = '☀️';
+            }
+        }
+
+        async function startSearch() {
+            const topic = document.getElementById('search-input').value;
+            if (!topic.trim()) return alert('من فضلك اكتب موضوعاً للبحث!');
+
+            document.getElementById('loader').classList.remove('hidden');
+            document.getElementById('results-box').classList.add('hidden');
+
+            try {
+                // الاتصال المباشر بالسيرفر السحابي أونلاين
+                const response = await fetch(`${BACKEND_URL}/api/search`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic: topic })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('ai-summary').innerText = data.ai_analysis.summary;
+                    const grid = document.getElementById('cards-grid');
+                    grid.innerHTML = '';
+
+                    // عرض المراجع الحية إذا رجعت من السيرفر
+                    if (data.sources && data.sources.length > 0) {
+                        data.sources.forEach(src => {
+                            grid.innerHTML += `
+                                <div class="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                                    <div><h4 class="text-base font-bold mb-2">${src.title}</h4><p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-4">${src.description}</p></div>
+                                    <a href="${src.url}" target="_blank" class="w-full text-center py-2 bg-gray-50 dark:bg-gray-800 text-sm font-medium rounded-xl block">عرض المصدر الفعلي ←</a>
+                                </div>`;
+                        });
+                    } else {
+                        grid.innerHTML = '<p class="text-sm text-gray-500 text-center col-span-full">انتهى البحث بنجاح، تصفح اللمحة الذكية بالأعلى لبدء المذاكرة 🎓!</p>';
+                    }
+                    document.getElementById('results-box').classList.remove('hidden');
+                }
+            } catch (err) {
+                alert('فشل الاتصال بالسيرفر السحابي، تأكد أنه مستيقظ!');
+            } finally {
+                document.getElementById('loader').classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
